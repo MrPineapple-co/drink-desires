@@ -293,31 +293,70 @@ h1.logo .amp{font-style:italic;font-weight:500;color:var(--gold);display:block;f
 @media (min-height:760px){.dare-text{font-size:clamp(20px,5.6vw,26px)}}
 
 /* ============================================================
-   CHANGE 1 — phone-landscape fit
-   Tighten the card height cap and trim vertical gaps so the full
-   game screen (HUD + card + buttons + footer) fits without scroll.
-   Only non-game screens may scroll if their content is taller.
+   CHANGE 1 — phone-landscape fit (Surgical CSS-only modification)
    ============================================================ */
 @media (orientation:landscape) and (max-height:600px){
   .stage{padding:8px clamp(16px,4vw,26px);padding-bottom:max(env(safe-area-inset-bottom),8px)}
-  /* tighter card height for short viewports */
+  
+  /* Symmetrical 3-column layout with buttons on the sides of the card */
+  #screen-game.active{
+    display:grid;
+    grid-template-columns: 1fr minmax(0,auto) 1fr;
+    grid-template-rows: auto auto 1fr auto auto;
+    grid-template-areas:
+      "hud    hud    hud"
+      "banner banner banner"
+      "dare   card   drink"
+      "stat   stat   stat"
+      "foot   foot   foot";
+    align-items:center;
+    gap:8px 18px;
+  }
+  .hud{grid-area:hud;gap:6px}
+  .turn-banner{grid-area:banner;font-size:14px;min-height:14px}
+  .card-stage{grid-area:card}
+  .status{grid-area:stat;min-height:22px}
+  .game-foot{grid-area:foot;margin-top:0}
+  
+  /* Make buttons grid items of the game screen */
+  .actions{display:contents}
+  #btnDare{grid-area:dare}
+  #btnDrink{grid-area:drink}
+  
+  /* Side buttons design - big, tall, easy tap targets */
+  #btnDare, #btnDrink{
+    align-self:stretch;
+    height:100%;
+    min-height:clamp(56px,30vh,150px);
+    max-height:46vh;
+    font-size:17px;
+    padding:12px 16px;
+  }
+
+  /* Tighter card height cap so it yields space first */
   .card-shell,
-  .deck-stack span{height:min(calc(74vw * 7.4 / 5), 56vh, 444px) !important}
-  /* trim vertical gaps throughout the game screen */
-  #screen-game{gap:4px}
-  .hud{gap:6px}
+  .deck-stack span{height:min(calc(74vw * 7.4 / 5), 45vh, 220px) !important}
+
+  /* Make golden buzzer large + centered when it appears */
+  #buzzer{
+    width:160px;
+    height:160px;
+    top:50%;
+    bottom:auto;
+    margin-top:-80px;
+  }
+  #buzzer .big{font-size:26px}
+  #buzzer .small{font-size:12px}
+
+  /* Trim vertical gaps and sizes throughout HUD */
   .hud-player{padding:6px 10px}
   .hud-name{font-size:15px}
   .hud-center .tier{font-size:13px}
   .hud-center .count{font-size:9px}
-  .turn-banner{font-size:14px;min-height:14px}
-  .status{min-height:22px}
-  .actions{gap:6px}
-  .actions .btn{padding:10px 16px;font-size:14px}
-  .game-foot{margin-top:0}
   .dare-text{font-size:clamp(15px,4vw,20px) !important}
   .face.content{padding:12px}
   .alt{margin-top:6px}
+
   /* non-game screens may scroll if needed */
   #screen-setup,#screen-end,#screen-landing{overflow-y:auto;-webkit-overflow-scrolling:touch}
 }
