@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0E0A0D">
+<!-- standalone / home-screen: chromeless on iPhone & Android -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Drunk Desires">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Drunk%20Desires%22%2C%22display%22%3A%22standalone%22%2C%22start_url%22%3A%22.%22%2C%22background_color%22%3A%22%230E0A0D%22%7D">
 <title>Drunk Desires</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,11 +159,12 @@ h1.logo .amp{font-style:italic;font-weight:500;color:var(--gold);display:block;f
 /* ---------- card stage ---------- */
 .card-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;perspective:1400px;position:relative}
 .deck-stack{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.deck-stack span{position:absolute;width:min(74vw,300px);aspect-ratio:5/7.4;border-radius:var(--r);background:var(--noir);border:1px solid rgba(232,192,122,.14)}
+/* CHANGE 1 — height-driven card: limited by the SMALLER of width OR height */
+.deck-stack span{position:absolute;aspect-ratio:5/7.4;width:auto;height:min(calc(74vw * 7.4 / 5), 70vh, 444px);border-radius:var(--r);background:var(--noir);border:1px solid rgba(232,192,122,.14)}
 .deck-stack span:nth-child(1){transform:translate(7px,9px) rotate(2.5deg);opacity:.5}
 .deck-stack span:nth-child(2){transform:translate(3px,4px) rotate(-1.5deg);opacity:.7}
 
-.card-shell{width:min(74vw,300px);aspect-ratio:5/7.4;position:relative;transform-style:preserve-3d}
+.card-shell{aspect-ratio:5/7.4;width:auto;height:min(calc(74vw * 7.4 / 5), 70vh, 444px);position:relative;transform-style:preserve-3d}
 .card-shell.deal{animation:deal .55s cubic-bezier(.2,.8,.2,1) both}
 @keyframes deal{0%{transform:translateY(60px) rotate(-6deg) scale(.9);opacity:0}100%{transform:none;opacity:1}}
 .card-shell.shake{animation:shake .5s ease}
@@ -284,6 +291,36 @@ h1.logo .amp{font-style:italic;font-weight:500;color:var(--gold);display:block;f
   *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.08s !important}
 }
 @media (min-height:760px){.dare-text{font-size:clamp(20px,5.6vw,26px)}}
+
+/* ============================================================
+   CHANGE 1 — phone-landscape fit
+   Tighten the card height cap and trim vertical gaps so the full
+   game screen (HUD + card + buttons + footer) fits without scroll.
+   Only non-game screens may scroll if their content is taller.
+   ============================================================ */
+@media (orientation:landscape) and (max-height:600px){
+  .stage{padding:8px clamp(16px,4vw,26px);padding-bottom:max(env(safe-area-inset-bottom),8px)}
+  /* tighter card height for short viewports */
+  .card-shell,
+  .deck-stack span{height:min(calc(74vw * 7.4 / 5), 56vh, 444px) !important}
+  /* trim vertical gaps throughout the game screen */
+  #screen-game{gap:4px}
+  .hud{gap:6px}
+  .hud-player{padding:6px 10px}
+  .hud-name{font-size:15px}
+  .hud-center .tier{font-size:13px}
+  .hud-center .count{font-size:9px}
+  .turn-banner{font-size:14px;min-height:14px}
+  .status{min-height:22px}
+  .actions{gap:6px}
+  .actions .btn{padding:10px 16px;font-size:14px}
+  .game-foot{margin-top:0}
+  .dare-text{font-size:clamp(15px,4vw,20px) !important}
+  .face.content{padding:12px}
+  .alt{margin-top:6px}
+  /* non-game screens may scroll if needed */
+  #screen-setup,#screen-end,#screen-landing{overflow-y:auto;-webkit-overflow-scrolling:touch}
+}
 </style>
 </head>
 <body>
@@ -376,6 +413,7 @@ h1.logo .amp{font-style:italic;font-weight:500;color:var(--gold);display:block;f
     </div>
     <div class="game-foot">
       <button class="link" id="btnEnd">End game</button>
+      <button class="link" id="btnFull">⛶ Fullscreen</button>
       <button class="link" id="btnSound">🔊 Sound on</button>
     </div>
   </section>
@@ -937,6 +975,25 @@ $('#btnEnd').onclick=()=>{
     (root)=>{ root.querySelector('#cEnd').onclick=()=>{closeModal();endGame();}; root.querySelector('#cKeep').onclick=closeModal; });
 };
 $('#btnSound').onclick=()=>{ const on=!Sound.get(); Sound.set(on); if(on)Sound.click(); $('#btnSound').textContent=on?'🔊 Sound on':'🔇 Sound off'; };
+
+// CHANGE 2 — Fullscreen toggle (feature-detect; hide on iPhone/environments with no API)
+(function(){
+  const el=document.documentElement, btn=$('#btnFull');
+  const canFS=!!(el.requestFullscreen||el.webkitRequestFullscreen);
+  if(!canFS){btn.style.display='none';return;}
+  btn.onclick=()=>{
+    try{
+      if(document.fullscreenElement||document.webkitFullscreenElement){
+        (document.exitFullscreen||document.webkitExitFullscreen).call(document);
+      }else{
+        (el.requestFullscreen||el.webkitRequestFullscreen).call(el);
+      }
+    }catch(e){}
+  };
+  function sync(){const fs=!!(document.fullscreenElement||document.webkitFullscreenElement);btn.textContent=fs?'⛌ Exit fullscreen':'⛶ Fullscreen';}
+  document.addEventListener('fullscreenchange',sync);
+  document.addEventListener('webkitfullscreenchange',sync);
+})();
 
 // timer controls
 $('#tPause').onclick=()=>{ Sound.click(); timerPause(); };
