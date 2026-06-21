@@ -296,7 +296,12 @@ h1.logo .amp{font-style:italic;font-weight:500;color:var(--gold);display:block;f
    CHANGE 1 — phone-landscape fit (Surgical CSS-only modification)
    ============================================================ */
 @media (orientation:landscape) and (max-height:600px){
-  .stage{padding:8px clamp(16px,4vw,26px);padding-bottom:max(env(safe-area-inset-bottom),8px)}
+  /* Allow stage to expand past the 480px portrait constraint to fill side space */
+  .stage{
+    max-width: 960px;
+    padding: 8px clamp(16px,4vw,26px);
+    padding-bottom: max(env(safe-area-inset-bottom), 8px);
+  }
   
   /* Symmetrical 3-column layout with buttons on the sides of the card */
   #screen-game.active{
@@ -323,19 +328,21 @@ h1.logo .amp{font-style:italic;font-weight:500;color:var(--gold);display:block;f
   #btnDare{grid-area:dare}
   #btnDrink{grid-area:drink}
   
-  /* Side buttons design - big, tall, easy tap targets */
+  /* Side buttons design - big, tall, easy tap targets pushed to the outside */
   #btnDare, #btnDrink{
     align-self:stretch;
     height:100%;
     min-height:clamp(56px,30vh,150px);
-    max-height:46vh;
+    max-height:48vh;
     font-size:17px;
     padding:12px 16px;
   }
 
-  /* Tighter card height cap so it yields space first */
+  /* Card height cap that preserves the original aspect-ratio and look */
   .card-shell,
-  .deck-stack span{height:min(calc(74vw * 7.4 / 5), 45vh, 220px) !important}
+  .deck-stack span{
+    height:min(calc(74vw * 7.4 / 5), 52vh, 260px) !important;
+  }
 
   /* Make golden buzzer large + centered when it appears */
   #buzzer{
@@ -348,14 +355,23 @@ h1.logo .amp{font-style:italic;font-weight:500;color:var(--gold);display:block;f
   #buzzer .big{font-size:26px}
   #buzzer .small{font-size:12px}
 
+  /* Scale card text and padding so it does not overflow */
+  .dare-text{
+    font-size:clamp(13px,4.5vh,17px) !important;
+    line-height:1.25;
+  }
+  .face.content{
+    padding:14px 12px;
+  }
+  .alt{
+    margin-top:6px;
+  }
+
   /* Trim vertical gaps and sizes throughout HUD */
   .hud-player{padding:6px 10px}
   .hud-name{font-size:15px}
   .hud-center .tier{font-size:13px}
   .hud-center .count{font-size:9px}
-  .dare-text{font-size:clamp(15px,4vw,20px) !important}
-  .face.content{padding:12px}
-  .alt{margin-top:6px}
 
   /* non-game screens may scroll if needed */
   #screen-setup,#screen-end,#screen-landing{overflow-y:auto;-webkit-overflow-scrolling:touch}
