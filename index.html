@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0E0A0D">
+<title>Drunk Desires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DRUNK DESIRES — design tokens
+   ============================================================ */
+:root{
+  --bg:#0E0A0D; --bg-2:#16101A; --noir:#15111A;
+  --gold:#E8C07A; --gold-bright:#F4D89B; --gold-deep:#B8893F;
+  --cream:#F3E9D8; --rose:#E89BAE; --rose-deep:#D96A86;
+  --crimson:#9E1B32; --crimson-deep:#6E0F22;
+  --ink:#2A1E22; --text:#EFE6DC; --muted:#9C8A90;
+  --glass:rgba(255,255,255,.05); --glass-2:rgba(255,255,255,.08);
+  --glass-brd:rgba(232,192,122,.22);
+  --serif:'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --r:20px; --stage:480px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--sans); color:var(--text); background:var(--bg);
+  background-image:
+    radial-gradient(120% 80% at 50% -10%, rgba(158,27,50,.22), transparent 55%),
+    radial-gradient(90% 60% at 50% 110%, rgba(232,192,122,.10), transparent 60%),
+    radial-gradient(60% 50% at 85% 20%, rgba(217,106,134,.10), transparent 70%);
+  min-height:100dvh; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+/* faint film-grain vignette */
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
+  background:radial-gradient(130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,.55));
+}
+.stage{
+  position:relative; z-index:2; width:100%; max-width:var(--stage);
+  margin:0 auto; min-height:100dvh; display:flex; flex-direction:column;
+  padding:clamp(16px,4vw,26px); padding-bottom:max(env(safe-area-inset-bottom),18px);
+}
+
+/* ---------- screens ---------- */
+.screen{display:none; flex-direction:column; flex:1; min-height:0; animation:fade .5s ease both}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- type ---------- */
+.eyebrow{font-family:var(--sans);font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.serif{font-family:var(--serif)}
+h1.logo{
+  font-family:var(--serif); font-weight:900; line-height:.92;
+  font-size:clamp(58px,17vw,86px); letter-spacing:-.02em; color:var(--cream);
+  text-shadow:0 2px 30px rgba(0,0,0,.5);
+}
+h1.logo .amp{font-style:italic;font-weight:500;color:var(--gold);display:block;font-size:.46em;letter-spacing:0;margin:.04em 0 .02em}
+.sub{color:var(--muted);font-size:15px;line-height:1.5;max-width:30ch}
+
+/* ---------- buttons ---------- */
+.btn{
+  font-family:var(--sans); font-weight:700; font-size:16px; border:none; cursor:pointer;
+  border-radius:14px; padding:16px 22px; width:100%; letter-spacing:.01em;
+  transition:transform .15s ease, box-shadow .25s ease, opacity .2s; color:var(--ink);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.btn:active{transform:scale(.97)}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
+  color:#231706; box-shadow:0 10px 30px -8px rgba(232,192,122,.55), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.btn-gold:hover{box-shadow:0 14px 38px -8px rgba(232,192,122,.7), inset 0 1px 0 rgba(255,255,255,.6)}
+.btn-ghost{background:var(--glass);color:var(--text);border:1px solid var(--glass-brd);backdrop-filter:blur(8px)}
+.btn-ghost:hover{background:var(--glass-2)}
+.btn-dare{
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold) 60%,var(--gold-deep));
+  color:#231706; box-shadow:0 8px 26px -6px rgba(232,192,122,.6), inset 0 1px 0 rgba(255,255,255,.5);
+  animation:dareGlow 2.6s ease-in-out infinite;
+}
+@keyframes dareGlow{0%,100%{box-shadow:0 8px 26px -6px rgba(232,192,122,.45),inset 0 1px 0 rgba(255,255,255,.5)}50%{box-shadow:0 10px 34px -4px rgba(232,192,122,.85),inset 0 1px 0 rgba(255,255,255,.6)}}
+.btn-drink{background:var(--glass);color:var(--text);border:1px solid var(--glass-brd);backdrop-filter:blur(8px)}
+.btn:disabled{opacity:.32;cursor:not-allowed;animation:none;filter:grayscale(.4)}
+.link{background:none;border:none;color:var(--muted);font-family:var(--sans);font-size:13px;cursor:pointer;padding:8px;letter-spacing:.02em}
+.link:hover{color:var(--gold)}
+
+/* ============================================================
+   LANDING
+   ============================================================ */
+#screen-landing{justify-content:center;align-items:center;text-align:center;gap:8px}
+#screen-landing .mark{font-size:34px;margin-bottom:6px;filter:drop-shadow(0 4px 16px rgba(232,192,122,.4))}
+#screen-landing .sub{margin:14px 0 30px;text-align:center}
+#screen-landing .cta{width:100%;display:flex;flex-direction:column;gap:12px;max-width:340px}
+.tag{display:inline-flex;gap:8px;align-items:center;color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin-top:26px}
+.tag .dot{width:5px;height:5px;border-radius:50%;background:var(--rose-deep)}
+
+/* ============================================================
+   SETUP
+   ============================================================ */
+.head{margin-bottom:22px}
+.head h2{font-family:var(--serif);font-weight:600;font-size:34px;letter-spacing:-.01em;color:var(--cream);margin-top:6px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:700}
+.field input{
+  width:100%;background:var(--glass);border:1px solid var(--glass-brd);border-radius:14px;
+  padding:15px 16px;color:var(--text);font-family:var(--serif);font-size:20px;outline:none;transition:border-color .2s,background .2s;
+}
+.field input::placeholder{color:var(--muted);font-style:italic}
+.field input:focus{border-color:var(--gold);background:var(--glass-2)}
+.consent{margin:22px 0 8px}
+.consent h3{font-family:var(--serif);font-style:italic;font-weight:500;font-size:19px;color:var(--gold);margin-bottom:14px}
+.check{display:flex;gap:13px;align-items:flex-start;padding:12px 14px;margin-bottom:9px;background:var(--glass);border:1px solid rgba(255,255,255,.06);border-radius:13px;cursor:pointer;transition:border-color .2s,background .2s}
+.check:hover{background:var(--glass-2)}
+.check.ok{border-color:var(--glass-brd)}
+.check input{position:absolute;opacity:0;width:0;height:0}
+.box{flex:0 0 22px;width:22px;height:22px;border-radius:7px;border:2px solid var(--muted);position:relative;transition:all .2s;margin-top:1px}
+.check.ok .box{background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep));border-color:var(--gold)}
+.box::after{content:"";position:absolute;left:6px;top:2px;width:6px;height:11px;border:solid #231706;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) scale(0);transition:transform .18s ease}
+.check.ok .box::after{transform:rotate(45deg) scale(1)}
+.check span{font-size:14px;line-height:1.45;color:var(--text)}
+.fineprint{font-size:12px;color:var(--muted);text-align:center;margin:16px 0 4px;line-height:1.5}
+.fineprint b{color:var(--rose);font-weight:500}
+.setup-actions{margin-top:auto;padding-top:18px;display:flex;flex-direction:column;gap:10px}
+
+/* ============================================================
+   GAME — HUD
+   ============================================================ */
+#screen-game{gap:14px}
+.hud{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
+.hud-player{display:flex;flex-direction:column;gap:5px;padding:11px 13px;border-radius:14px;background:var(--glass);border:1px solid transparent;transition:all .35s}
+.hud-player.right{align-items:flex-end;text-align:right}
+.hud-player.active{border-color:var(--gold);background:rgba(232,192,122,.08);box-shadow:0 0 22px -8px rgba(232,192,122,.6)}
+.hud-name{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--cream);max-width:11ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hud-player.active .hud-name{color:var(--gold)}
+.hud-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.hud-player.right .hud-meta{flex-direction:row-reverse}
+.hud-drinks{display:flex;align-items:center;gap:4px}
+.hud-drinks b{color:var(--gold);font-weight:700;font-size:14px}
+.streak{display:flex;gap:3px}
+.streak i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.14);transition:background .3s}
+.streak i.on{background:var(--rose-deep);box-shadow:0 0 6px var(--rose-deep)}
+.hud-center{text-align:center}
+.hud-center .tier{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--gold);line-height:1}
+.hud-center .count{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+.turn-banner{text-align:center;font-family:var(--serif);font-style:italic;font-size:17px;color:var(--text);min-height:22px;opacity:0;transform:translateY(6px);transition:all .4s}
+.turn-banner.show{opacity:1;transform:none}
+.turn-banner b{color:var(--gold);font-style:normal;font-weight:600}
+
+/* ---------- card stage ---------- */
+.card-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;perspective:1400px;position:relative}
+.deck-stack{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.deck-stack span{position:absolute;width:min(74vw,300px);aspect-ratio:5/7.4;border-radius:var(--r);background:var(--noir);border:1px solid rgba(232,192,122,.14)}
+.deck-stack span:nth-child(1){transform:translate(7px,9px) rotate(2.5deg);opacity:.5}
+.deck-stack span:nth-child(2){transform:translate(3px,4px) rotate(-1.5deg);opacity:.7}
+
+.card-shell{width:min(74vw,300px);aspect-ratio:5/7.4;position:relative;transform-style:preserve-3d}
+.card-shell.deal{animation:deal .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes deal{0%{transform:translateY(60px) rotate(-6deg) scale(.9);opacity:0}100%{transform:none;opacity:1}}
+.card-shell.shake{animation:shake .5s ease}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
+.card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.1,.2,1)}
+.card-inner.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 60px -20px rgba(0,0,0,.8)}
+
+/* deck back (cover) */
+.face.cover{background:linear-gradient(160deg,#1b1420,#0d090f);border:1px solid rgba(232,192,122,.25);align-items:center;justify-content:center;gap:14px}
+.cover .monogram{font-family:var(--serif);font-weight:900;font-size:60px;color:transparent;background:linear-gradient(135deg,var(--gold-bright),var(--gold-deep));-webkit-background-clip:text;background-clip:text;letter-spacing:-.04em}
+.cover .ring{position:absolute;inset:14px;border:1px solid rgba(232,192,122,.28);border-radius:13px}
+.cover .ring::before,.cover .ring::after{content:"";position:absolute;width:7px;height:7px;border:1px solid var(--gold);}
+.cover .ring::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.cover .ring::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.cover small{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-deep)}
+
+/* content face */
+.face.content{transform:rotateY(180deg);padding:18px;justify-content:space-between;align-items:center;text-align:center}
+.face.content .peppers{display:flex;gap:3px;align-self:flex-end}
+.pep{width:18px;height:18px;display:inline-block}
+.pep svg{width:100%;height:100%}
+.pep.off{opacity:.22}
+.icon-wrap{flex:1;display:flex;align-items:center;justify-content:center;width:100%}
+.icon-wrap svg{width:min(40%,110px);height:auto;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.dare-text{font-family:var(--serif);font-weight:600;font-size:clamp(19px,5.4vw,24px);line-height:1.22;letter-spacing:-.01em}
+.alt{display:flex;align-items:center;gap:10px;width:100%;margin-top:14px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;opacity:.75}
+.alt::before,.alt::after{content:"";height:1px;flex:1;background:currentColor;opacity:.4}
+.alt.locked{color:var(--crimson);font-weight:700;opacity:1}
+
+/* category palettes */
+.content.white{background:linear-gradient(165deg,#fbf5ea,#efe2cd);color:var(--ink);border:1px solid #e6d6b8}
+.content.white .icon-wrap svg{stroke:#b88a3a}
+.content.pink{background:linear-gradient(165deg,#f6b9c8,#e58aa3);color:#5a1a2c;border:1px solid #f0a7bb}
+.content.pink .icon-wrap svg{stroke:#fff;opacity:.92}
+.content.red{background:linear-gradient(165deg,#b81f39,#7c1226);color:var(--cream);border:1px solid #d4456a}
+.content.red .icon-wrap svg{stroke:var(--gold-bright)}
+.content.black{background:linear-gradient(165deg,#231a2c,#0c0810);color:var(--gold);border:1px solid rgba(232,192,122,.4)}
+.content.black .icon-wrap svg{stroke:var(--rose)}
+.content.black .dare-text{color:var(--gold-bright)}
+
+/* ---------- status + actions ---------- */
+.status{text-align:center;min-height:34px;display:flex;flex-direction:column;gap:3px;justify-content:center}
+.status .next{font-size:12px;color:var(--muted);letter-spacing:.04em}
+.status .warn{font-size:12px;font-weight:700;color:var(--rose);letter-spacing:.03em}
+.status .warn.hard{color:var(--crimson)}
+.actions{display:flex;flex-direction:column;gap:10px}
+.game-foot{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+
+/* ============================================================
+   GOLDEN BUZZER
+   ============================================================ */
+#buzzer{
+  position:fixed;left:50%;bottom:clamp(130px,30vh,260px);transform:translateX(-50%) scale(0);
+  z-index:60;width:118px;height:118px;border-radius:50%;border:none;cursor:pointer;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:radial-gradient(circle at 35% 30%,var(--gold-bright),var(--gold) 45%,var(--gold-deep) 100%);
+  color:#231706;box-shadow:0 0 0 0 rgba(232,192,122,.6);
+  font-family:var(--sans);font-weight:700;
+}
+#buzzer.show{display:flex;animation:buzzPop .4s ease both, buzzPulse 1s ease-in-out infinite .4s}
+#buzzer .big{font-family:var(--serif);font-weight:900;font-size:19px;letter-spacing:.02em;line-height:1}
+#buzzer .small{font-size:9px;letter-spacing:.22em;text-transform:uppercase}
+#buzzer::before{content:"";position:absolute;inset:-1px;border-radius:50%;border:2px dashed rgba(35,23,6,.45)}
+@keyframes buzzPop{from{transform:translateX(-50%) scale(0) rotate(-40deg)}to{transform:translateX(-50%) scale(1) rotate(0)}}
+@keyframes buzzPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,192,122,.55),0 14px 36px -6px rgba(232,192,122,.7)}50%{box-shadow:0 0 0 22px rgba(232,192,122,0),0 14px 36px -6px rgba(244,216,155,.9)}}
+
+/* ============================================================
+   OVERLAYS / MODALS
+   ============================================================ */
+.overlay{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(8,5,9,.78);backdrop-filter:blur(10px)}
+.overlay.show{display:flex;animation:fade .3s ease both}
+.panel{width:100%;max-width:380px;background:linear-gradient(165deg,#1a1320,#100b14);border:1px solid var(--glass-brd);border-radius:24px;padding:26px;text-align:center;box-shadow:0 40px 80px -20px rgba(0,0,0,.7)}
+.panel h3{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--cream);margin-bottom:6px}
+.panel .lead{color:var(--gold);font-family:var(--serif);font-style:italic;margin-bottom:20px;font-size:18px}
+.panel p{color:var(--muted);font-size:14px;line-height:1.55;margin-bottom:18px}
+.panel .stack{display:flex;flex-direction:column;gap:10px}
+.tut-list{text-align:left;display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
+.tut-list li{list-style:none;display:flex;gap:13px;align-items:flex-start}
+.tut-list .ic{flex:0 0 34px;width:34px;height:34px;border-radius:10px;background:rgba(232,192,122,.12);display:flex;align-items:center;justify-content:center;font-size:17px}
+.tut-list b{color:var(--cream);font-weight:600;display:block;font-size:15px;margin-bottom:2px}
+.tut-list span{color:var(--muted);font-size:13px;line-height:1.4}
+
+/* ---------- timer overlay ---------- */
+#timer{position:fixed;inset:0;z-index:80;display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:rgba(6,4,7,.94);backdrop-filter:blur(6px);padding:30px;text-align:center}
+#timer.show{display:flex;animation:fade .3s ease both}
+#timer .tlabel{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--gold);max-width:24ch;line-height:1.3}
+.ring-wrap{position:relative;width:230px;height:230px}
+.ring-wrap svg{transform:rotate(-90deg);width:100%;height:100%}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:8}
+.ring-fg{fill:none;stroke:url(#tg);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .25s linear}
+.ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-num .n{font-family:var(--serif);font-weight:900;font-size:74px;color:var(--cream);line-height:1}
+.ring-num .l{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+#timer .trow{display:flex;gap:12px;width:100%;max-width:320px}
+#timer .trow .btn{flex:1}
+#timer.done .ring-fg{stroke:var(--crimson)}
+#timer.done .ring-num .n{color:var(--gold);animation:flashNum .5s ease-in-out 3}
+@keyframes flashNum{50%{opacity:.3}}
+
+/* ============================================================
+   END
+   ============================================================ */
+#screen-end{justify-content:center;text-align:center;gap:6px}
+#screen-end .crown{font-size:40px;margin-bottom:6px}
+#screen-end h2{font-family:var(--serif);font-weight:600;font-size:38px;color:var(--cream);letter-spacing:-.01em}
+#screen-end .sub{margin:8px auto 24px;text-align:center}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
+.stat{background:var(--glass);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:18px 14px}
+.stat.full{grid-column:1/-1}
+.stat .num{font-family:var(--serif);font-weight:900;font-size:40px;color:var(--gold);line-height:1}
+.stat .lab{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.fav{display:flex;justify-content:space-around;gap:12px;margin-bottom:20px}
+.fav div{flex:1;background:var(--glass);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px}
+.fav .pn{font-family:var(--serif);font-size:17px;color:var(--cream);margin-bottom:4px;font-weight:600}
+.fav .pc{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:15px}
+#screen-end .stack{display:flex;flex-direction:column;gap:10px;width:100%;max-width:340px;margin:0 auto}
+
+/* confetti */
+#fx{position:fixed;inset:0;z-index:90;pointer-events:none}
+
+/* reduced motion */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.08s !important}
+}
+@media (min-height:760px){.dare-text{font-size:clamp(20px,5.6vw,26px)}}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ============ LANDING ============ -->
+  <section class="screen active" id="screen-landing">
+    <div class="mark">🥂</div>
+    <p class="eyebrow">A game for two</p>
+    <h1 class="logo">Drunk<span class="amp">&amp;</span>Desires</h1>
+    <p class="sub">Take turns. Draw a card. Do the dare — or take the drink. It only gets bolder from here.</p>
+    <div class="cta">
+      <button class="btn btn-gold" id="goNew">Start new game</button>
+      <button class="btn btn-ghost" id="goResume" style="display:none">Resume game</button>
+    </div>
+    <div class="tag"><span class="dot"></span> Adults only · Drink responsibly</div>
+  </section>
+
+  <!-- ============ SETUP ============ -->
+  <section class="screen" id="screen-setup">
+    <div class="head">
+      <p class="eyebrow">Before we begin</p>
+      <h2 class="serif">Who’s playing?</h2>
+    </div>
+    <div class="field">
+      <label>Player one</label>
+      <input id="p1name" type="text" maxlength="14" placeholder="Their name" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Player two</label>
+      <input id="p2name" type="text" maxlength="14" placeholder="Their name" autocomplete="off">
+    </div>
+
+    <div class="consent">
+      <h3>The fine print (sign here)</h3>
+      <div id="consentList"></div>
+    </div>
+    <p class="fineprint"><b>Play responsibly.</b> Keep water nearby, know your limits, and remember any dare can be passed — no questions asked.</p>
+
+    <div class="setup-actions">
+      <button class="btn btn-gold" id="startGame" disabled>Deal us in</button>
+      <button class="link" id="backLanding">← Back</button>
+    </div>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section class="screen" id="screen-game">
+    <div class="hud">
+      <div class="hud-player" id="hud0">
+        <div class="hud-name">—</div>
+        <div class="hud-meta"><span class="hud-drinks">🥃 <b>0</b></span><span class="streak"><i></i><i></i><i></i></span></div>
+      </div>
+      <div class="hud-center">
+        <div class="tier" id="tierName">Candlelight</div>
+        <div class="count" id="cardCount">Card 1</div>
+      </div>
+      <div class="hud-player right" id="hud1">
+        <div class="hud-name">—</div>
+        <div class="hud-meta"><span class="streak"><i></i><i></i><i></i></span><span class="hud-drinks">🥃 <b>0</b></span></div>
+      </div>
+    </div>
+
+    <div class="turn-banner" id="turnBanner"></div>
+
+    <div class="card-stage">
+      <div class="deck-stack"><span></span><span></span></div>
+      <div class="card-shell" id="cardShell">
+        <div class="card-inner" id="cardInner">
+          <div class="face cover">
+            <div class="ring"></div>
+            <div class="monogram">D&amp;D</div>
+            <small>Drunk Desires</small>
+          </div>
+          <div class="face content white" id="cardContent">
+            <div class="peppers"></div>
+            <div class="icon-wrap"></div>
+            <div>
+              <div class="dare-text"></div>
+              <div class="alt">or take a drink</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status" id="status"></div>
+    <div class="actions">
+      <button class="btn btn-dare" id="btnDare">Do the dare</button>
+      <button class="btn btn-drink" id="btnDrink">Take the drink</button>
+    </div>
+    <div class="game-foot">
+      <button class="link" id="btnEnd">End game</button>
+      <button class="link" id="btnSound">🔊 Sound on</button>
+    </div>
+  </section>
+
+  <!-- ============ END ============ -->
+  <section class="screen" id="screen-end">
+    <div class="crown">🏆</div>
+    <p class="eyebrow">That’s a wrap</p>
+    <h2 class="serif">Well played</h2>
+    <p class="sub" id="endLine">You two survived the deck.</p>
+    <div class="stats" id="endStats"></div>
+    <div class="fav" id="endFav"></div>
+    <div class="stack">
+      <button class="btn btn-gold" id="playAgain">Play again</button>
+      <button class="btn btn-ghost" id="newPlayers">New players</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- golden buzzer -->
+<button id="buzzer"><span class="big">FLASH</span><span class="small">Round</span></button>
+
+<!-- generic modal (tutorial / buzzer power) -->
+<div class="overlay" id="modal"><div class="panel" id="modalBody"></div></div>
+
+<!-- timer overlay -->
+<div id="timer">
+  <div class="tlabel" id="tLabel"></div>
+  <div class="ring-wrap">
+    <svg viewBox="0 0 100 100">
+      <defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4D89B"/><stop offset="1" stop-color="#D96A86"/></linearGradient></defs>
+      <circle class="ring-bg" cx="50" cy="50" r="44"/>
+      <circle class="ring-fg" id="tRing" cx="50" cy="50" r="44"/>
+    </svg>
+    <div class="ring-num"><div class="n" id="tNum">0</div><div class="l" id="tLab">seconds</div></div>
+  </div>
+  <div class="trow">
+    <button class="btn btn-ghost" id="tPause">Pause</button>
+    <button class="btn btn-gold" id="tDone" style="display:none">Continue</button>
+    <button class="btn btn-ghost" id="tSkip">Skip</button>
+  </div>
+</div>
+
+<canvas id="fx"></canvas>
+
+<script>
+"use strict";
+/* ============================================================================
+   DRUNK DESIRES — game logic
+   ----------------------------------------------------------------------------
+   To edit dares: change the CARDS array below. Each card needs:
+     id            unique string
+     text          the dare (shown on the card)
+     category      'white' | 'pink' | 'red' | 'black'  (controls colour + difficulty)
+     icon          one of the keys in ICONS (see that object)
+     timer         seconds for a countdown, or 0 for none
+   intensity (1-4 chilis) is set automatically from the category.
+============================================================================ */
+
+const CARDS = [
+  /* ========== WHITE · Mild · Flirty (Intensity 1) ========== */
+  {id:'w1',  cat:'white', icon:'hands',    timer:30,  text:'Give your partner a 30-second shoulder rub or drink'},
+  {id:'w2',  cat:'white', icon:'heart',    timer:0,   text:'Tell your partner three things you find irresistible about them or drink'},
+  {id:'w3',  cat:'white', icon:'eye',      timer:30,  text:'Hold eye contact for 30 seconds without laughing or drink'},
+  {id:'w4',  cat:'white', icon:'note',     timer:0,   text:'Slow dance together for one whole song or drink'},
+  {id:'w5',  cat:'white', icon:'whisper',  timer:0,   text:'Whisper your favourite memory of the two of you or drink'},
+  {id:'w6',  cat:'white', icon:'lips',     timer:0,   text:'Give your partner a lingering forehead kiss or drink'},
+  {id:'w7',  cat:'white', icon:'star',     timer:20,  text:'Describe your partner using only flattering words for 20 seconds or drink'},
+  {id:'w8',  cat:'white', icon:'heart',    timer:0,   text:'Hold hands and share the best part of your day or drink'},
+  {id:'w9',  cat:'white', icon:'note',     timer:0,   text:'Do your most loving impression of your partner or drink'},
+  {id:'w10', cat:'white', icon:'eye',      timer:0,   text:'Gaze into your partner\'s eyes and describe their colour in detail or drink'},
+  {id:'w11', cat:'white', icon:'hands',    timer:60,  text:'Give your partner a one-minute hand massage or drink'},
+  {id:'w12', cat:'white', icon:'heart',    timer:0,   text:'Recreate your first date in a single sentence or drink'},
+
+  /* ========== PINK · Spicy · Physical (Intensity 2) ========== */
+  {id:'p1',  cat:'pink', icon:'lips',       timer:30,  text:'Kiss your partner\'s neck for 30 seconds or drink'},
+  {id:'p2',  cat:'pink', icon:'hands',      timer:60,  text:'Give your partner a one-minute foot massage or drink'},
+  {id:'p3',  cat:'pink', icon:'whisper',    timer:0,   text:'Whisper something dirty in your partner\'s ear or drink'},
+  {id:'p4',  cat:'pink', icon:'lips',       timer:0,   text:'Plant five kisses anywhere above the waist or drink'},
+  {id:'p5',  cat:'pink', icon:'heart',      timer:0,   text:'Sit on your partner\'s lap until your next turn or drink'},
+  {id:'p6',  cat:'pink', icon:'clothing',   timer:0,   text:'Let your partner remove one item of your clothing or drink'},
+  {id:'p7',  cat:'pink', icon:'lips',       timer:60,  text:'Make out with your partner for one minute or drink'},
+  {id:'p8',  cat:'pink', icon:'hands',      timer:0,   text:'Let your partner give you a sensual massage anywhere they choose or drink'},
+  {id:'p9',  cat:'pink', icon:'whisper',    timer:0,   text:'Describe your ideal romantic night in vivid detail or drink'},
+  {id:'p10', cat:'pink', icon:'blindfold',  timer:0,   text:'Let your partner blindfold you for the next two cards or drink'},
+  {id:'p11', cat:'pink', icon:'lips',       timer:0,   text:'Kiss your partner\'s entire body from neck to navel or drink'},
+  {id:'p12', cat:'pink', icon:'hands',      timer:120, text:'Give your partner a two-minute scalp massage or drink'},
+  {id:'p13', cat:'pink', icon:'name',       timer:0,   text:'For the rest of the game, your partner chooses what you must call them or drink'},
+
+  /* ========== RED · Hot · Intense (Intensity 3) ========== */
+  {id:'r1',  cat:'red', icon:'flame',      timer:0,   text:'Give your partner a striptease to one song or drink'},
+  {id:'r2',  cat:'red', icon:'lips',       timer:120, text:'Perform oral on your partner for 2 minutes or drink'},
+  {id:'r3',  cat:'red', icon:'paddle',      timer:0,   text:'Let your partner spank you 10 times or drink'},
+  {id:'r4',  cat:'red', icon:'lips',       timer:0,   text:'Kiss your partner\'s inner thighs for 1 minute or drink'},
+  {id:'r5',  cat:'red', icon:'flame',      timer:0,   text:'Whisper your filthiest fantasy in explicit detail or drink'},
+  {id:'r6',  cat:'red', icon:'clothing',   timer:0,   text:'Strip completely naked and stay naked for 3 rounds or drink'},
+  {id:'r7',  cat:'red', icon:'lips',       timer:0,   text:'69 with your partner for 3 minutes or drink'},
+  {id:'r8',  cat:'red', icon:'hands',      timer:0,   text:'Let your partner tie your hands behind your back for 5 minutes or drink'},
+  {id:'r9',  cat:'red', icon:'flame',      timer:0,   text:'Masturbate in front of your partner or drink'},
+  {id:'r10', cat:'red', icon:'lips',       timer:0,   text:'Let your partner use a toy on you for 5 minutes or drink'},
+  {id:'r11', cat:'red', icon:'hands',      timer:0,   text:'Finger your partner until they say stop or drink'},
+  {id:'r12', cat:'red', icon:'flame',      timer:0,   text:'Let your partner edge you 3 times then stop or drink'},
+  {id:'r13', cat:'red', icon:'lips',       timer:0,   text:'Deepthroat your partner for 30 seconds or drink'},
+  {id:'r14', cat:'red', icon:'hands',      timer:0,   text:'Let your partner write something dirty on your body with marker or drink'},
+  {id:'r15', cat:'red', icon:'flame',      timer:0,   text:'Have sex in a position your partner chooses or drink'},
+
+  /* ========== BLACK · Wild · Filthy Acts (Intensity 4) ========== */
+  {id:'b1',  cat:'black', icon:'toilet',   timer:0,   text:'Clean the toilet bowl with your tongue or drink'},
+  {id:'b2',  cat:'black', icon:'drop',     timer:0,   text:'Give your partner a golden shower or drink'},
+  {id:'b3',  cat:'black', icon:'drop',     timer:0,   text:'Receive a golden shower from your partner or drink'},
+  {id:'b4',  cat:'black', icon:'peach',     timer:0,   text:'Rim your partner for 2 minutes or drink'},
+  {id:'b5',  cat:'black', icon:'foot',    timer:0,   text:'Be your partner\'s human footrest for 10 minutes or drink'},
+  {id:'b6',  cat:'black', icon:'spit',    timer:0,   text:'Let your partner spit in your mouth or drink'},
+  {id:'b7',  cat:'black', icon:'lips',     timer:0,   text:'Clean your partner\'s genitals with only your tongue after sex or drink'},
+  {id:'b8',  cat:'black', icon:'collar',    timer:0,   text:'Wear a collar and leash for the rest of the game or drink'},
+  {id:'b9',  cat:'black', icon:'razors',    timer:0,   text:'Let your partner shave your pubic hair completely or drink'},
+  {id:'b10', cat:'black', icon:'flasplashme',    timer:0,   text:'Let your partner cum on your face and leave it there or drink'}
+];
+
+const INTENSITY = {white:1, pink:2, red:3, black:4};
+const TIER = {white:'Candlelight', pink:'Blush', red:'Heat', black:'Midnight'};
+
+/* ---------- ink-drawn SVG icons (stroke = currentColor via parent) ---------- */
+const ICONS = {
+  /* --- EXISTING ICONS (slightly improved) --- */
+  heart:'<svg viewBox="0 0 100 100"><path d="M50 85C20 65 15 42 30 28c10-9 20 0 20 10 0-10 10-19 20-10 15 14 10 37-20 57Z" fill="none" stroke="currentColor" stroke-width="4"/></svg>',
+  
+  lips:'<svg viewBox="0 0 100 100"><path d="M18 50c10-14 22-14 32-6 10-8 22-8 32 6-10 15-22 19-32 12-10 7-22 3-32-12Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M18 50h64" stroke="currentColor" stroke-width="3"/></svg>',
+  
+  eye:'<svg viewBox="0 0 100 100"><path d="M14 50c16-26 56-26 72 0-16 26-56 26-72 0Z" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="50" cy="50" r="12" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="50" cy="50" r="5" fill="currentColor"/></svg>',
+  
+  hands:'<svg viewBox="0 0 100 100"><path d="M28 70V45c0-5 6-5 6 0v8m0-12c0-5 6-5 6 0v12m0-14c0-5 7-5 7 0v15m0-10c0-5 6-5 6 0v11c0 15-10 23-20 23-9 0-16-7-17-16l-2-12c-1-6 6-8 8-3l6 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>',
+  
+  note:'<svg viewBox="0 0 100 100"><path d="M38 22v40" stroke="currentColor" stroke-width="4"/><path d="M38 22l32-8v40l-32 8" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="32" cy="66" rx="10" ry="8" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="64" cy="58" rx="10" ry="8" fill="none" stroke="currentColor" stroke-width="4"/></svg>',
+  
+  whisper:'<svg viewBox="0 0 100 100"><path d="M20 30h60v36H48l-14 14V66H20Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M36 48h4m12 0h4m12 0h4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
+  
+  flame:'<svg viewBox="0 0 100 100"><path d="M50 12c14 18 26 26 26 46 0 18-12 32-26 32S24 76 24 58c0-12 6-18 12-24 2 10 8 12 10 8-6-12 0-26 4-30Z" fill="none" stroke="currentColor" stroke-width="4"/></svg>',
+  
+  blindfold:'<svg viewBox="0 0 100 100"><path d="M12 42h76v16H12Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M12 42l-6 6M88 42l6 6M12 58l-6 6M88 58l6 6" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="50" r="4" fill="currentColor"/></svg>',
+  
+  crown:'<svg viewBox="0 0 100 100"><path d="M20 68h60l6-36-20 15-16-24-16 24-20-15z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M20 68h60" stroke="currentColor" stroke-width="4"/><circle cx="30" cy="48" r="3" fill="currentColor"/><circle cx="50" cy="38" r="3" fill="currentColor"/><circle cx="70" cy="48" r="3" fill="currentColor"/></svg>',
+  
+  dice:'<svg viewBox="0 0 100 100"><rect x="22" y="22" width="56" height="56" rx="8" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="38" cy="38" r="4" fill="currentColor"/><circle cx="62" cy="62" r="4" fill="currentColor"/><circle cx="50" cy="50" r="4" fill="currentColor"/><circle cx="62" cy="38" r="4" fill="currentColor"/><circle cx="38" cy="62" r="4" fill="currentColor"/></svg>',
+  
+  clothing:'<svg viewBox="0 0 100 100"><path d="M34 24l-16 10 8 12 8-4v34h36V42l8 4 8-12-16-10-8 6a10 10 0 0 1-20 0z" fill="none" stroke="currentColor" stroke-width="4"/></svg>',
+  
+  star:'<svg viewBox="0 0 100 100"><path d="M50 16l12 26 28 2-20 20 6 28-26-14-26 14 6-28-20-20 28-2z" fill="none" stroke="currentColor" stroke-width="4"/></svg>',
+  
+  /* --- NEW ICONS FOR FILTHY ACTS --- */
+  
+  // For: golden showers, watersports
+  drop:'<svg viewBox="0 0 100 100"><path d="M50 20c-8 16-24 36-24 50 0 16 12 26 24 26s24-10 24-26c0-14-16-34-24-50Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M38 70c4 8 20 8 24 0" stroke="currentColor" stroke-width="3" fill="none"/></svg>',
+  
+  // For: toilet cleaning, bathroom tasks
+  toilet:'<svg viewBox="0 0 100 100"><ellipse cx="50" cy="75" rx="30" ry="12" fill="none" stroke="currentColor" stroke-width="4"/><path d="M20 75V45c0-10 60-10 60 0v30" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="50" cy="45" rx="30" ry="10" fill="none" stroke="currentColor" stroke-width="4"/><path d="M35 35V25h30v10" stroke="currentColor" stroke-width="4"/></svg>',
+  
+  // For: collar and leash, BDSM
+  collar:'<svg viewBox="0 0 100 100"><path d="M20 40c0-16 60-16 60 0v20c0 16-60 16-60 0Z" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="50" cy="55" r="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 61v20M44 81h12" stroke="currentColor" stroke-width="3"/></svg>',
+  
+  // For: rimming/anal (tongue + peach)
+  peach:'<svg viewBox="0 0 100 100"><path d="M50 25c-20 0-35 20-35 40 0 16 16 20 35 20s35-4 35-20c0-20-15-40-35-40Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 25v-8" stroke="currentColor" stroke-width="4"/><path d="M35 50c5 10 25 10 30 0" stroke="currentColor" stroke-width="3" fill="none"/></svg>',
+  
+  // For: spanking, impact play
+  paddle:'<svg viewBox="0 0 100 100"><rect x="42" y="15" width="16" height="50" rx="3" fill="none" stroke="currentColor" stroke-width="4"/><path d="M45 65h10l8 20H37z" fill="none" stroke="currentColor" stroke-width="4"/><line x1="50" y1="75" x2="50" y2="85" stroke="currentColor" stroke-width="3"/></svg>',
+  
+  // For: name/appellative card
+  name:'<svg viewBox="0 0 100 100"><rect x="20" y="30" width="60" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="4"/><path d="M30 55l8-15 8 15m-4-8h8" stroke="currentColor" stroke-width="3" fill="none"/><path d="M55 40v15m0-15c8 0 8 15 0 15" stroke="currentColor" stroke-width="3" fill="none"/></svg>',
+  
+  // For: cum/mess on face, fluids
+  splash:'<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="4"/><path d="M30 30c4-4 8-2 8 2s-4 8-8 4-4-8 0-6zm40 0c4-4 8-2 8 2s-4 8-8 4-4-8 0-6zM20 60c6-2 10 2 8 6s-8 6-10 2 2-8 2-8zm60 0c6-2 10 2 8 6s-8 6-10 2 2-8 2-8z" fill="currentColor"/></svg>',
+  
+  // For: footrest, service, worship
+  foot:'<svg viewBox="0 0 100 100"><ellipse cx="50" cy="75" rx="25" ry="10" fill="none" stroke="currentColor" stroke-width="4"/><path d="M35 75V45c0-8 6-8 6 0v8m6-10c0-8 6-8 6 0v10m6-8c0-8 6-8 6 0v8" fill="none" stroke="currentColor" stroke-width="4"/></svg>',
+  
+  // For: shaving, grooming
+  razor:'<svg viewBox="0 0 100 100"><rect x="35" y="20" width="30" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="4"/><line x1="35" y1="35" x2="65" y2="35" stroke="currentColor" stroke-width="3"/><line x1="42" y1="70" x2="58" y2="70" stroke="currentColor" stroke-width="3"/><path d="M50 70v15" stroke="currentColor" stroke-width="3"/></svg>',
+  
+  // For: spit, fluids in mouth
+  spit:'<svg viewBox="0 0 100 100"><path d="M30 35c10-5 30-5 40 0-10 15-30 15-40 0Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M35 45c5 10 25 10 30 0" stroke="currentColor" stroke-width="3" fill="none"/><ellipse cx="50" cy="65" rx="15" ry="10" fill="none" stroke="currentColor" stroke-width="4"/></svg>',
+};
+const PEPPER = '<svg viewBox="0 0 24 24"><path d="M7 9c-3 0-5 2.5-5 6 0 5 4 8 9 6.6C17 20 19.5 14 18 8.5 16.8 4.5 13.5 3 10.5 4.3" fill="currentColor" stroke="none"/><path d="M14 4c-1 0-2 1-2 2 0 1.6 1.6 2 2.5 1.6" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
+/* ============================================================================
+   SOUND — synthesized via Web Audio (no files to host)
+============================================================================ */
+const Sound = (()=>{
+  let ctx=null, on=true;
+  function init(){ if(!ctx){ try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(ctx&&ctx.state==='suspended') ctx.resume(); }
+  function tone(o){
+    if(!ctx||!on) return;
+    const t=ctx.currentTime+(o.when||0), osc=ctx.createOscillator(), g=ctx.createGain();
+    osc.type=o.type||'sine'; osc.frequency.setValueAtTime(o.freq,t);
+    if(o.glide) osc.frequency.exponentialRampToValueAtTime(o.glide,t+o.dur);
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(o.gain||.12,t+(o.attack||.006));
+    g.gain.exponentialRampToValueAtTime(.0001,t+o.dur+(o.rel||.1));
+    osc.connect(g).connect(ctx.destination); osc.start(t); osc.stop(t+o.dur+(o.rel||.1)+.02);
+  }
+  return {
+    init, set(v){on=v;}, get(){return on;},
+    click(){tone({freq:520,type:'triangle',dur:.05,gain:.07,rel:.05});},
+    flip(){tone({freq:170,glide:520,type:'sawtooth',dur:.16,gain:.06,rel:.08});tone({freq:880,type:'sine',dur:.06,gain:.04,when:.12});},
+    drink(){tone({freq:300,glide:130,type:'sine',dur:.3,gain:.12,rel:.12});tone({freq:150,glide:80,type:'sine',dur:.25,gain:.08,when:.05});},
+    dare(){tone({freq:523,type:'triangle',dur:.12,gain:.1});tone({freq:784,type:'triangle',dur:.18,gain:.1,when:.1});},
+    buzz(){[0,.15,.3].forEach(w=>{tone({freq:680,type:'square',dur:.11,gain:.09,when:w});tone({freq:1020,type:'square',dur:.11,gain:.07,when:w+.05});});},
+    tick(){tone({freq:900,type:'sine',dur:.03,gain:.05,rel:.03});},
+    alarm(){for(let i=0;i<4;i++){tone({freq:1046,type:'square',dur:.12,gain:.13,when:i*.2});tone({freq:1318,type:'square',dur:.12,gain:.1,when:i*.2+.07});}},
+    cheer(){[523,659,784,1046,1318].forEach((f,i)=>tone({freq:f,type:'triangle',dur:.18,gain:.12,when:i*.09,rel:.14}));}
+  };
+})();
+
+/* ============================================================================
+   STATE + PERSISTENCE
+============================================================================ */
+const SAVE_KEY='drunkDesires_v1';
+let state=null;
+const $=s=>document.querySelector(s);
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const mkPlayer=n=>({name:n, total:0, streak:0, dares:0, cats:{white:0,pink:0,red:0,black:0}});
+
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){} }
+function load(){ try{ const s=localStorage.getItem(SAVE_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function clearSave(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} }
+
+function totalDrinks(){ return state.players[0].total + state.players[1].total; }
+function allowedCats(t){ if(t<=3) return ['white']; if(t<=7) return ['white','pink']; if(t<=12) return ['pink','red']; return ['red','black']; }
+
+function pickCard(){
+  const cats=allowedCats(totalDrinks());
+  let pool=CARDS.filter(c=>cats.includes(c.cat)&&!state.usedIds.includes(c.id));
+  if(!pool.length){ // recycle within current tier when exhausted
+    state.usedIds=state.usedIds.filter(id=>{const c=CARDS.find(x=>x.id===id);return c&&!cats.includes(c.cat);});
+    pool=CARDS.filter(c=>cats.includes(c.cat));
+  }
+  const card=pool[Math.floor(Math.random()*pool.length)];
+  state.usedIds.push(card.id);
+  return card;
+}
+
+/* ============================================================================
+   SCREENS
+============================================================================ */
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $('#'+id).classList.add('active'); }
+
+/* ---------- consent checkboxes ---------- */
+const CONSENT=[
+  'I promise not to blame the game for my choices.',
+  'I acknowledge that drinks are for hydration purposes only. 🚰',
+  'What happens in the game stays in the game.',
+  'I confirm we’re both of legal drinking age where we are.',
+  'We both agree any dare can be passed — anytime, no questions asked.',
+];
+function buildConsent(){
+  const wrap=$('#consentList'); wrap.innerHTML='';
+  CONSENT.forEach((t,i)=>{
+    const lbl=document.createElement('label'); lbl.className='check';
+    lbl.innerHTML=`<input type="checkbox" data-i="${i}"><span class="box"></span><span>${t}</span>`;
+    const cb=lbl.querySelector('input');
+    cb.addEventListener('change',()=>{ lbl.classList.toggle('ok',cb.checked); Sound.click(); checkSetup(); });
+    wrap.appendChild(lbl);
+  });
+}
+function checkSetup(){
+  const named = $('#p1name').value.trim() && $('#p2name').value.trim();
+  const allOk = [...document.querySelectorAll('#consentList input')].every(c=>c.checked);
+  $('#startGame').disabled = !(named && allOk);
+}
+
+/* ============================================================================
+   GAME RENDER
+============================================================================ */
+function renderHUD(){
+  const p=state.players, a=state.active;
+  [0,1].forEach(i=>{
+    const h=$('#hud'+i);
+    h.classList.toggle('active', a===i);
+    h.querySelector('.hud-name').textContent=p[i].name;
+    h.querySelector('.hud-drinks b').textContent=p[i].total;
+    const dots=h.querySelectorAll('.streak i');
+    dots.forEach((d,k)=>d.classList.toggle('on', k<Math.min(p[i].streak,3)));
+  });
+  $('#tierName').textContent=TIER[allowedCats(totalDrinks()).slice(-1)[0]];
+  $('#cardCount').textContent='Card '+state.cardCount;
+}
+function renderStatus(){
+  const t=totalDrinks(); let next;
+  if(t<=3) next=`${4-t} drink${4-t===1?'':'s'} until Blush`;
+  else if(t<=7) next=`${8-t} until Heat`;
+  else if(t<=12) next=`${13-t} until Midnight`;
+  else next='Every deck unlocked 🔥';
+  const s=state.players[state.active].streak;
+  let warn='', hard=false;
+  if(s>=3){ warn='Drink limit reached — dare only'; hard=true; }
+  else if(s===2){ warn='One more drink locks you into the dare'; }
+  $('#status').innerHTML=`<div class="next">${next}</div>`+(warn?`<div class="warn${hard?' hard':''}">${warn}</div>`:'');
+}
+function peppersHTML(level){
+  let s=''; for(let i=1;i<=4;i++) s+=`<span class="pep ${i<=level?'on':'off'}">${PEPPER}</span>`; return s;
+}
+
+function dealNextCard(){
+  state.cardCount++;
+  state.currentCard=pickCard();
+  const c=state.currentCard, p=state.players[state.active];
+  const locked = p.streak>=3;
+
+  renderHUD(); renderStatus();
+
+  // build content face
+  const content=$('#cardContent');
+  content.className='face content '+c.cat;
+  content.querySelector('.peppers').innerHTML=peppersHTML(INTENSITY[c.cat]);
+  content.querySelector('.icon-wrap').innerHTML=ICONS[c.icon]||ICONS.heart;
+  content.querySelector('.dare-text').textContent=c.text;
+  const alt=content.querySelector('.alt');
+  alt.className='alt'+(locked?' locked':'');
+  alt.textContent=locked?'no drinking — dare only':'or take a drink';
+
+  // turn banner
+  const tb=$('#turnBanner'); tb.classList.remove('show');
+  tb.innerHTML=`<b>${p.name}</b>’s turn`;
+
+  // deal + flip animation
+  const shell=$('#cardShell'), inner=$('#cardInner');
+  inner.classList.remove('flipped'); shell.classList.remove('deal','shake');
+  void shell.offsetWidth; shell.classList.add('deal');
+  Sound.flip();
+
+  $('#btnDare').disabled=true; $('#btnDrink').disabled=true;
+  setTimeout(()=>{ inner.classList.add('flipped'); tb.classList.add('show'); }, 380);
+  setTimeout(()=>{
+    $('#btnDrink').textContent = locked ? 'No escape' : 'Take the drink';
+    $('#btnDare').disabled=false; $('#btnDrink').disabled=locked;
+    if(locked){ shell.classList.add('shake'); }
+    maybeBuzzer();
+  }, 1000);
+  save();
+}
+
+function performDare(pi, card, after){
+  const finish=()=>{
+    const p=state.players[pi];
+    p.dares++; p.cats[card.cat]++; p.streak=0;
+    Sound.dare();
+    if(card.cat==='black'){ confetti(); Sound.cheer(); }
+    save(); after();
+  };
+  if(card.timer>0) openTimer(card, finish); else finish();
+}
+function onDare(){ hideBuzzer(); performDare(state.active, state.currentCard, nextTurn); }
+function onDrink(){
+  hideBuzzer();
+  const p=state.players[state.active];
+  p.total++; p.streak++; Sound.drink(); save(); nextTurn();
+}
+function nextTurn(){ hideBuzzer(); state.active=1-state.active; dealNextCard(); }
+
+/* ============================================================================
+   GOLDEN BUZZER
+============================================================================ */
+let buzzerLive=false;
+function maybeBuzzer(){
+  if(state.cardCount>=state.buzzerAt && !buzzerLive){
+    buzzerLive=true;
+    state.buzzerAt=state.cardCount+rand(5,8);
+    $('#buzzer').classList.add('show'); Sound.buzz();
+  }
+}
+function hideBuzzer(){ buzzerLive=false; $('#buzzer').classList.remove('show'); }
+function onBuzzer(){
+  Sound.click();
+  const p=state.players;
+  modal(`
+    <p class="eyebrow">Flash round!</p>
+    <h3>Who slammed it?</h3>
+    <p>First hand on the buzzer claims the power move.</p>
+    <div class="stack">
+      <button class="btn btn-gold" data-claim="0">${esc(p[0].name)}</button>
+      <button class="btn btn-gold" data-claim="1">${esc(p[1].name)}</button>
+    </div>`,(root)=>{
+    root.querySelectorAll('[data-claim]').forEach(b=>b.onclick=()=>buzzerPower(+b.dataset.claim));
+  });
+}
+function buzzerPower(claimer){
+  const opp=1-claimer, p=state.players;
+  modal(`
+    <p class="eyebrow">${esc(p[claimer].name)} wins the round</p>
+    <h3>Choose your power</h3>
+    <p>Aim it at <b style="color:var(--cream)">${esc(p[opp].name)}</b>.</p>
+    <div class="stack">
+      <button class="btn btn-gold" data-pw="force">Make them do it — no drinking out</button>
+      <button class="btn btn-ghost" data-pw="double">Make them chug 2 drinks</button>
+    </div>`,(root)=>{
+    root.querySelector('[data-pw="force"]').onclick=()=>{ closeModal(); applyPower(claimer,'force'); };
+    root.querySelector('[data-pw="double"]').onclick=()=>{ closeModal(); applyPower(claimer,'double'); };
+  });
+}
+function applyPower(claimer,type){
+  hideBuzzer();
+  const opp=1-claimer;
+  if(type==='force'){
+    performDare(opp, state.currentCard, nextTurn);
+  } else {
+    const p=state.players[opp]; p.total+=2; p.streak+=2; Sound.drink(); save(); nextTurn();
+  }
+}
+
+/* ============================================================================
+   TIMER OVERLAY
+============================================================================ */
+const timer={raf:0, paused:false, endAt:0, remaining:0, total:0, onDone:null, lastSec:0};
+const RING_C = 2*Math.PI*44;
+function openTimer(card, onDone){
+  timer.total=card.timer; timer.remaining=card.timer; timer.onDone=onDone; timer.paused=false; timer.lastSec=Math.ceil(card.timer);
+  $('#tLabel').textContent=card.text;
+  $('#tRing').style.strokeDasharray=RING_C;
+  $('#timer').classList.remove('done'); $('#tDone').style.display='none';
+  $('#tPause').style.display=''; $('#tSkip').style.display=''; $('#tPause').textContent='Pause';
+  $('#tLab').textContent='seconds';
+  $('#timer').classList.add('show');
+  renderTimer(); timerStart();
+}
+function timerStart(){ timer.endAt=performance.now()+timer.remaining*1000; cancelAnimationFrame(timer.raf); timer.raf=requestAnimationFrame(timerFrame); }
+function timerFrame(now){
+  if(timer.paused) return;
+  timer.remaining=Math.max(0,(timer.endAt-now)/1000);
+  renderTimer();
+  const s=Math.ceil(timer.remaining);
+  if(s!==timer.lastSec && s>0){ timer.lastSec=s; Sound.tick(); }
+  if(timer.remaining<=0){ timerDone(); return; }
+  timer.raf=requestAnimationFrame(timerFrame);
+}
+function renderTimer(){
+  $('#tNum').textContent=Math.ceil(timer.remaining);
+  const frac=timer.total? timer.remaining/timer.total : 0;
+  $('#tRing').style.strokeDashoffset = RING_C*(1-frac);
+}
+function timerDone(){
+  $('#timer').classList.add('done'); $('#tNum').textContent='0'; $('#tLab').textContent='time!';
+  $('#tRing').style.strokeDashoffset=RING_C;
+  $('#tPause').style.display='none'; $('#tSkip').style.display='none'; $('#tDone').style.display='';
+  Sound.alarm();
+}
+function timerPause(){
+  if(timer.paused){ timer.paused=false; $('#tPause').textContent='Pause'; timerStart(); }
+  else { timer.paused=true; $('#tPause').textContent='Resume'; cancelAnimationFrame(timer.raf); }
+}
+function timerClose(run){
+  cancelAnimationFrame(timer.raf);
+  $('#timer').classList.remove('show');
+  const cb=timer.onDone; timer.onDone=null;
+  if(run && cb) cb();
+}
+
+/* ============================================================================
+   CONFETTI
+============================================================================ */
+function confetti(){
+  const cv=$('#fx'), ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight;
+  const colors=['#E8C07A','#F4D89B','#D96A86','#F3E9D8','#9E1B32'];
+  const N=140, ps=[];
+  for(let i=0;i<N;i++) ps.push({x:innerWidth/2+(Math.random()-.5)*120, y:innerHeight*.42, vx:(Math.random()-.5)*9, vy:Math.random()*-13-4, g:.32+Math.random()*.2, r:5+Math.random()*6, c:colors[i%colors.length], a:Math.random()*6, va:(Math.random()-.5)*.4, life:0});
+  let frames=0;
+  (function loop(){
+    ctx.clearRect(0,0,cv.width,cv.height); frames++;
+    let alive=false;
+    ps.forEach(p=>{
+      p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.a+=p.va; p.life++;
+      if(p.y<cv.height+20){ alive=true; }
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a);
+      ctx.fillStyle=p.c; ctx.globalAlpha=Math.max(0,1-p.life/120);
+      ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.5); ctx.restore();
+    });
+    if(alive && frames<160) requestAnimationFrame(loop); else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+/* ============================================================================
+   MODALS (tutorial + buzzer)
+============================================================================ */
+function esc(s){ return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+function modal(html, wire){
+  const body=$('#modalBody'); body.innerHTML=html;
+  $('#modal').classList.add('show');
+  if(wire) wire(body);
+}
+function closeModal(){ $('#modal').classList.remove('show'); }
+
+function showTutorial(after){
+  modal(`
+    <p class="eyebrow">How to play</p>
+    <h3 class="serif">The rules of desire</h3>
+    <ul class="tut-list">
+      <li><span class="ic">🃏</span><div><b>Take turns</b><span>Each card is a dare. Do it — or take the drink instead.</span></div></li>
+      <li><span class="ic">🌶️</span><div><b>It heats up</b><span>The more you both drink, the bolder the deck gets.</span></div></li>
+      <li><span class="ic">🥃</span><div><b>No hiding</b><span>Drink three times in a row and the next dare is mandatory.</span></div></li>
+      <li><span class="ic">⚡</span><div><b>Flash round</b><span>When the golden buzzer appears, first to tap claims a power move.</span></div></li>
+    </ul>
+    <div class="stack"><button class="btn btn-gold" id="tutGo">Let’s play</button></div>`,
+    (root)=>{ root.querySelector('#tutGo').onclick=()=>{ closeModal(); after(); }; });
+}
+
+/* ============================================================================
+   START / END
+============================================================================ */
+function beginGame(){
+  state={
+    screen:'game',
+    players:[mkPlayer($('#p1name').value.trim()||'Player 1'), mkPlayer($('#p2name').value.trim()||'Player 2')],
+    active:0, cardCount:0, currentCard:null, usedIds:[], buzzerAt:rand(5,8)
+  };
+  hideBuzzer(); save();
+  show('screen-game');
+  showTutorial(()=>dealNextCard());
+}
+
+function endGame(){
+  const p=state.players;
+  const dares=p[0].dares+p[1].dares, drinks=p[0].total+p[1].total;
+  $('#endStats').innerHTML=`
+    <div class="stat"><div class="num">${dares}</div><div class="lab">Dares done</div></div>
+    <div class="stat"><div class="num">${drinks}</div><div class="lab">Drinks taken</div></div>
+    <div class="stat full"><div class="num">${state.cardCount}</div><div class="lab">Cards played</div></div>`;
+  const favOf=pl=>{ let best=null,n=-1; for(const k in pl.cats){ if(pl.cats[k]>n){n=pl.cats[k];best=k;} } return n>0?TIER[best]:'Still shy'; };
+  $('#endFav').innerHTML=p.map(pl=>`<div><div class="pn">${esc(pl.name)}</div><div class="pc">${favOf(pl)}</div></div>`).join('');
+  const top = p[0].dares===p[1].dares ? 'A perfectly matched pair.' : `${esc((p[0].dares>p[1].dares?p[0]:p[1]).name)} was the braver one tonight.`;
+  $('#endLine').textContent=top;
+  clearSave();
+  show('screen-end');
+  confetti();
+}
+
+/* ============================================================================
+   WIRE UP
+============================================================================ */
+function unlockAudio(){ Sound.init(); }
+['pointerdown','keydown','touchstart'].forEach(e=>window.addEventListener(e,unlockAudio,{once:false}));
+
+// landing
+$('#goNew').onclick=()=>{ Sound.init(); Sound.click(); $('#p1name').value=''; $('#p2name').value=''; buildConsent(); checkSetup(); show('screen-setup'); };
+$('#goResume').onclick=()=>{ const s=load(); if(s){ state=s; hideBuzzer(); show('screen-game'); dealNextCard(); } };
+
+// setup
+['#p1name','#p2name'].forEach(id=>$(id).addEventListener('input',checkSetup));
+$('#startGame').onclick=()=>{ Sound.click(); beginGame(); };
+$('#backLanding').onclick=()=>{ Sound.click(); show('screen-landing'); };
+
+// game
+$('#btnDare').onclick=onDare;
+$('#btnDrink').onclick=onDrink;
+$('#buzzer').onclick=onBuzzer;
+$('#btnEnd').onclick=()=>{
+  Sound.click();
+  modal(`<h3 class="serif">End the night?</h3><p>You’ll see your final stats. The current game won’t be saved.</p>
+    <div class="stack"><button class="btn btn-gold" id="cEnd">Show our stats</button><button class="btn btn-ghost" id="cKeep">Keep playing</button></div>`,
+    (root)=>{ root.querySelector('#cEnd').onclick=()=>{closeModal();endGame();}; root.querySelector('#cKeep').onclick=closeModal; });
+};
+$('#btnSound').onclick=()=>{ const on=!Sound.get(); Sound.set(on); if(on)Sound.click(); $('#btnSound').textContent=on?'🔊 Sound on':'🔇 Sound off'; };
+
+// timer controls
+$('#tPause').onclick=()=>{ Sound.click(); timerPause(); };
+$('#tSkip').onclick=()=>{ Sound.click(); timerClose(true); };
+$('#tDone').onclick=()=>{ Sound.click(); timerClose(true); };
+
+// end
+$('#playAgain').onclick=()=>{ Sound.click(); beginGame(); };
+$('#newPlayers').onclick=()=>{ Sound.click(); show('screen-landing'); };
+
+// modal backdrop close (only for non-critical modals — tutorial/buzzer keep open)
+$('#modal').addEventListener('click',e=>{ if(e.target===$('#modal')){} });
+
+// resume offer on load
+(function init(){
+  const s=load();
+  if(s && s.screen==='game'){ $('#goResume').style.display=''; }
+  buildConsent();
+})();
+
+window.addEventListener('resize',()=>{ const cv=$('#fx'); cv.width=innerWidth; cv.height=innerHeight; });
+</script>
+</body>
+</html>
